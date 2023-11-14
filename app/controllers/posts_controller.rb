@@ -24,11 +24,12 @@ class PostsController < ApplicationController
     the_post.expires_on = params.fetch("query_expires_on")
     the_post.board_id = params.fetch("query_board_id")
 
-    if the_post.valid?
+    if the_post.body.blank?
+      flash[:error] = "Body cannot be empty."
+      redirect_to("/posts", { :alert => the_post.errors.full_messages.to_sentence })
+    else
       the_post.save
       redirect_to("/posts", { :notice => "Post created successfully." })
-    else
-      redirect_to("/posts", { :alert => the_post.errors.full_messages.to_sentence })
     end
   end
 

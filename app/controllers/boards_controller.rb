@@ -1,8 +1,13 @@
 class BoardsController < ApplicationController
+  def home
+    @boards = Board.all()
+    render({ :template => "boards/home" })
+  end
+
   def index
     matching_boards = Board.all
 
-    @list_of_boards = matching_boards.order({ :created_at => :desc })
+    @boards = matching_boards.order({ :created_at => :desc })
 
     render({ :template => "boards/index" })
   end
@@ -13,6 +18,8 @@ class BoardsController < ApplicationController
     matching_boards = Board.where({ :id => the_id })
 
     @the_board = matching_boards.at(0)
+    @active_posts = Post.where("board_id = ? AND expires_on >= ?", the_id, Date.today)
+    @expired_posts = Post.where("board_id = ? AND expires_on < ?", the_id, Date.today)
 
     render({ :template => "boards/show" })
   end
